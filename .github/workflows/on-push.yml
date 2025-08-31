@@ -1,0 +1,13 @@
+name: Print Message on Push
+
+on:
+  push:
+    branches:
+      - main   # אם ה־branch שלך הוא master, החלף ל-master
+
+jobs:
+  say-hello:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print a message
+        run: echo "🎉 Push בוצע! זה לוג מ-GitHub Actions 🚀"
