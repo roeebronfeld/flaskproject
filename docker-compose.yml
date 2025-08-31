@@ -7,7 +7,7 @@ services:
     build:
       # build the image from Dockerfile
       context: .
-      dockerfile: Dockerfile
+      dockerfile: server.Dockerfile
     environment:
       # set database credentials
       DB_HOST: mysql
@@ -28,7 +28,7 @@ services:
   mysql:
     container_name: mysql
     # let's grab from mysql 5.7 image
-    image: mysql:5.7
+    image: mysql
     volumes:
         # pass volume named mysql-data to mysql container
       - mysql-data:/var/lib/mysql
@@ -42,7 +42,31 @@ services:
       MYSQL_DATABASE: flask
       MYSQL_USER: flask
       MYSQL_PASSWORD: password
-
+  phpmyadmin:
+    image: phpmyadmin:5.2
+    container_name: phpmyadmin
+    restart: unless-stopped
+    depends_on:
+      - mysql                   
+    environment:
+      PMA_HOST: mysql           
+      PMA_PORT: 3306
+      PMA_USER: flask         
+      PMA_PASSWORD: password  
+    ports:
+      - "8080:80"               
+  test:
+    image: flask_test:latest
+    container_name: flask_test
+    restart: unless-stopped
+    build:
+      # build the image from Dockerfile
+      context: .
+      dockerfile: test.Dockerfile
+    links:
+    - app
+    depends_on:
+    - app
 # volumes definition here
 volumes:
   # just a persistance data
